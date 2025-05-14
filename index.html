@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese Verb Flashcards</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background-color: #f0f7ff;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+            background-color: #e6f0ff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 100, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        h1 {
+            font-size: 28px;
+            color: #2850a7;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        
+        .checkbox-control {
+            display: flex;
+            align-items: center;
+        }
+        
+        .checkbox-control input {
+            margin-right: 5px;
+        }
+        
+        .checkbox-control label {
+            font-size: 14px;
+        }
+        
+        .categories {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        
+        .category-btn {
+            padding: 6px 12px;
+            font-size: 14px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            background-color: #e0e0e0;
+        }
+        
+        .category-btn.active {
+            background-color: #3366cc;
+            color: white;
+        }
+        
+        .card-counter {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .flashcard-container {
+            width: 100%;
+            height: 300px;
+            perspective: 1000px;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+        
+        .flashcard {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.5s;
+        }
+        
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+        
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        
+        .card-front {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-back {
+            background-color: #e1f0ff;
+            transform: rotateY(180deg);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .japanese {
+            font-size: 48px;
+            font-weight: bold;
+            color: #2850a7;
+            margin-bottom: 10px;
+        }
+        
+        .romaji {
+            font-size: 24px;
+            color: #3366cc;
+            margin-bottom: 8px;
+        }
+        
+        .pronunciation {
+            font-size: 18px;
+            font-style: italic;
+            color: #777;
+            margin-bottom: 15px;
+        }
+        
+        .memory-aid {
+            text-align: center;
+            font-size: 14px;
+            color: #3366cc;
+            margin-top: 16px;
+            margin-bottom: 12px;
+            max-width: 300px;
+        }
+        
+        .memory-aid-title {
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        
+        .english {
+            font-size: 30px;
+            font-weight: bold;
+            color: #2850a7;
+            margin-bottom: 16px;
+        }
+        
+        .example {
+            font-size: 18px;
+            color: #3366cc;
+            margin-bottom: 4px;
+            text-align: center;
+        }
+        
+        .example-romaji {
+            font-size: 16px;
+            color: #4477dd;
+            margin-bottom: 4px;
+            text-align: center;
+        }
+        
+        .example-english {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .flip-instruction {
+            font-size: 12px;
+            color: #999;
+            margin-top: 15px;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
+        .nav-btn {
+            padding: 10px 20px;
+            background-color: #3366cc;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            flex: 1;
+            max-width: 200px;
+        }
+        
+        .nav-btn:hover {
+            background-color: #2850a7;
+        }
+        
+        .instructions {
+            background-color: white;
+            border-radius: 8px;
+            padding: 16px;
+            width: 100%;
+            margin-top: 20px;
+        }
+        
+        .instructions h2 {
+            font-size: 18px;
+            color: #2850a7;
+            margin-bottom: 10px;
+        }
+        
+        .instructions ul {
+            padding-left: 25px;
+            color: #555;
+            font-size: 14px;
+        }
+        
+        .instructions li {
+            margin-bottom: 5px;
+        }
+        
+        @media (max-width: 600px) {
+            .japanese {
+                font-size: 36px;
+            }
+            
+            .romaji {
+                font-size: 20px;
+            }
+            
+            .english {
+                font-size: 24px;
+            }
+            
+            .flashcard-container {
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Japanese Verb Flashcards (Polite Form)</h1>
+        
+        <div class="controls">
+            <div class="checkbox-control">
+                <input type="checkbox" id="showRomaji" checked>
+                <label for="showRomaji">Show Romaji</label>
+            </div>
+            
+            <div class="checkbox-control">
+                <input type="checkbox" id="showPronunciation" checked>
+                <label for="showPronunciation">Show Pronunciation</label>
+            </div>
+            
+            <div class="checkbox-control">
+                <input type="checkbox" id="shuffleCards">
+                <label for="shuffleCards">Shuffle Cards</label>
+            </div>
+        </div>
+        
+        <div class="categories" id="categories">
+            <!-- Categories will be added here by JavaScript -->
+        </div>
+        
+        <div class="card-counter" id="cardCounter">
+            Card 1 of 15
+        </div>
+        
+        <div class="flashcard-container" id="flashcardContainer">
+            <div class="flashcard" id="flashcard">
+                <div class="card-face card-front" id="cardFront">
+                    <div class="japanese" id="japanese">いきます</div>
+                    <div class="romaji" id="romaji">ikimasu</div>
+                    <div class="pronunciation" id="pronunciation">"ee-kee-mah-s"</div>
+                    <div class="memory-aid">
+                        <div class="memory-aid-title">Memory Aid:</div>
+                        <div id="memoryAid">Think: "I-key-mas" - I need a key to go places</div>
+                    </div>
+                    <div class="flip-instruction">Click to flip</div>
+                </div>
+                
+                <div class="card-face card-back">
+                    <div class="english" id="english">to go</div>
+                    <div class="example" id="example">わたしは学校にいきます。</div>
+                    <div class="example-romaji" id="exampleRomaji">Watashi wa gakkō ni ikimasu.</div>
+                    <div class="example-english" id="exampleEnglish">I go to school.</div>
+                    <div class="flip-instruction">Click to flip</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="nav-buttons">
+            <button class="nav-btn" id="prevBtn">Previous</button>
+            <button class="nav-btn" id="nextBtn">Next</button>
+        </div>
+        
+        <div class="instructions">
+            <h2>How to Use:</h2>
+            <ul>
+                <li>Click on the card to flip between Japanese and English</li>
+                <li>Use the Previous/Next buttons to navigate through cards</li>
+                <li>Toggle options to show/hide romaji and pronunciation</li>
+                <li>Select a category to focus on specific types of verbs</li>
+                <li>Enable shuffle for randomized practice</li>
+                <li>Use the memory aids to help remember connections between words</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        const allCards = [
+            {
+                japanese: 'いきます',
+                romaji: 'ikimasu',
+                english: 'to go',
+                pronunciation: 'ee-kee-mah-s',
+                example: 'わたしは学校にいきます。',
+                exampleRomaji: 'Watashi wa gakkō ni ikimasu.',
+                exampleEnglish: 'I go to school.',
+                category: 'movement',
+                memoryAid: 'Think: "I-key-mas" - I need a key to go places'
+            },
+            {
+                japanese: 'きます',
+                romaji: 'kimasu',
+                english: 'to come',
+                pronunciation: 'kee-mah-s',
+                example: '友だちが家にきます。',
+                exampleRomaji: 'Tomodachi ga ie ni kimasu.',
+                exampleEnglish: 'My friend comes to my house.',
+                category: 'movement',
+                memoryAid: 'Sounds like "key mass" - a crowd (mass) of people coming with keys'
+            },
+            {
+                japanese: 'たべます',
+                romaji: 'tabemasu',
+                english: 'to eat',
+                pronunciation: 'tah-beh-mah-s',
+                example: '朝ごはんをたべます。',
+                exampleRomaji: 'Asa gohan o tabemasu.',
+                exampleEnglish: 'I eat breakfast.',
+                category: 'daily',
+                memoryAid: 'Think "table-mass" - you eat food at a table'
+            },
+            {
+                japanese: 'のみます',
+                romaji: 'nomimasu',
+                english: 'to drink',
+                pronunciation: 'noh-mee-mah-s',
+                example: '水をのみます。',
+                exampleRomaji: 'Mizu o nomimasu.',
+                exampleEnglish: 'I drink water.',
+                category: 'daily',
+                memoryAid: 'Like "no-me-mas" - "no me más" in Spanish means "no more for me" (after drinking)'
+            },
+            {
+                japanese: 'みます',
+                romaji: 'mimasu',
+                english: 'to see/watch',
+                pronunciation: 'mee-mah-s',
+                example: 'テレビをみます。',
+                exampleRomaji: 'Terebi o mimasu.',
+                exampleEnglish: 'I watch TV.',
+                category: 'action',
+                memoryAid: 'Sounds like "me-mass" - using your eyes (me) to see many things (mass)'
+            },
+            {
+                japanese: 'ききます',
+                romaji: 'kikimasu',
+                english: 'to listen/hear',
+                pronunciation: 'kee-kee-mah-s',
+                example: '音楽をききます。',
+                exampleRomaji: 'Ongaku o kikimasu.',
+                exampleEnglish: 'I listen to music.',
+                category: 'communication',
+                memoryAid: 'Think "key-key-mas" - turning two keys to unlock your ears to hear'
+            },
+            {
+                japanese: 'はなします',
+                romaji: 'hanashimasu',
+                english: 'to speak/talk',
+                pronunciation: 'hah-nah-shee-mah-s',
+                example: '日本語をはなします。',
+                exampleRomaji: 'Nihongo o hanashimasu.',
+                exampleEnglish: 'I speak Japanese.',
+                category: 'communication',
+                memoryAid: 'Sounds like "ha-na-she-mas" - "Ha! Now she must speak!"'
+            },
+            {
+                japanese: 'よみます',
+                romaji: 'yomimasu',
+                english: 'to read',
+                pronunciation: 'yoh-mee-mah-s',
+                example: '本をよみます。',
+                exampleRomaji: 'Hon o yomimasu.',
+                exampleEnglish: 'I read a book.',
+                category: 'action',
+                memoryAid: 'Sounds like "yo-me-mas" - "Yo! Me must read this!"'
+            },
+            {
+                japanese: 'かきます',
+                romaji: 'kakimasu',
+                english: 'to write',
+                pronunciation: 'kah-kee-mah-s',
+                example: '手紙をかきます。',
+                exampleRomaji: 'Tegami o kakimasu.',
+                exampleEnglish: 'I write a letter.',
+                category: 'action',
+                memoryAid: 'Sounds like "car-key-mas" - using a car key to scratch and write messages'
+            },
+            {
+                japanese: 'ねます',
+                romaji: 'nemasu',
+                english: 'to sleep',
+                pronunciation: 'neh-mah-s',
+                example: '11時にねます。',
+                exampleRomaji: 'Juuichi-ji ni nemasu.',
+                exampleEnglish: 'I sleep at 11 o\'clock.',
+                category: 'daily',
+                memoryAid: 'Similar to "nay-mass" - saying "nay" (no) to the mass of people because you\'re sleepy'
+            },
+            {
+                japanese: 'おきます',
+                romaji: 'okimasu',
+                english: 'to wake up',
+                pronunciation: 'oh-kee-mah-s',
+                example: '7時におきます。',
+                exampleRomaji: 'Shichi-ji ni okimasu.',
+                exampleEnglish: 'I wake up at 7 o\'clock.',
+                category: 'daily',
+                memoryAid: 'Think "oh-key-mas" - "Oh! The key is missing!" (That would wake you up!)'
+            },
+            {
+                japanese: 'あるきます',
+                romaji: 'arukimasu',
+                english: 'to walk',
+                pronunciation: 'ah-roo-kee-mah-s',
+                example: '公園をあるきます。',
+                exampleRomaji: 'Kouen o arukimasu.',
+                exampleEnglish: 'I walk in the park.',
+                category: 'movement',
+                memoryAid: 'Sounds like "a-roo-key-mas" - "a roo (kangaroo) keeps moving" (walking)'
+            },
+            {
+                japanese: 'します',
+                romaji: 'shimasu',
+                english: 'to do',
+                pronunciation: 'shee-mah-s',
+                example: '宿題をします。',
+                exampleRomaji: 'Shukudai o shimasu.',
+                exampleEnglish: 'I do homework.',
+                category: 'action',
+                memoryAid: 'Think "she-mas" - "She must do it!"'
+            },
+            {
+                japanese: 'あります',
+                romaji: 'arimasu',
+                english: 'to exist (for objects)',
+                pronunciation: 'ah-ree-mah-s',
+                example: '本が机の上にあります。',
+                exampleRomaji: 'Hon ga tsukue no ue ni arimasu.',
+                exampleEnglish: 'There is a book on the desk.',
+                category: 'daily',
+                memoryAid: 'Sounds like "are-ee-mas" - "There are masses" of things that exist'
+            },
+            {
+                japanese: 'います',
+                romaji: 'imasu',
+                english: 'to exist (for living things)',
+                pronunciation: 'ee-mah-s',
+                example: '猫が部屋にいます。',
+                exampleRomaji: 'Neko ga heya ni imasu.',
+                exampleEnglish: 'There is a cat in the room.',
+                category: 'daily',
+                memoryAid: 'Sounds like "e-mas" - "E(very) mass" of living beings exist'
+            }
+        ];
+        
+        const categories = {
+            'action': 'Action Verbs',
+            'daily': 'Daily Life',
+            'communication': 'Communication',
+            'movement': 'Movement',
+            'all': 'All Verbs'
+        };
+        
+        let currentCards = [...allCards];
+        let currentCardIndex = 0;
+        let selectedCategory = 'all';
+        let isShuffled = false;
+        
+        // DOM Elements
+        const categoriesContainer = document.getElementById('categories');
+        const cardCounter = document.getElementById('cardCounter');
+        const flashcard = document.getElementById('flashcard');
+        const japaneseEl = document.getElementById('japanese');
+        const romajiEl = document.getElementById('romaji');
+        const pronunciationEl = document.getElementById('pronunciation');
+        const memoryAidEl = document.getElementById('memoryAid');
+        const englishEl = document.getElementById('english');
+        const exampleEl = document.getElementById('example');
+        const exampleRomajiEl = document.getElementById('exampleRomaji');
+        const exampleEnglishEl = document.getElementById('exampleEnglish');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const showRomajiCheckbox = document.getElementById('showRomaji');
+        const showPronunciationCheckbox = document.getElementById('showPronunciation');
+        const shuffleCardsCheckbox = document.getElementById('shuffleCards');
+        const cardFront = document.getElementById('cardFront');
+        
+        // Initialize categories
+        for (const [key, value] of Object.entries(categories)) {
+            const button = document.createElement('button');
+            button.textContent = value;
+            button.className = `category-btn ${key === selectedCategory ? 'active' : ''}`;
+            button.setAttribute('data-category', key);
+            button.addEventListener('click', () => {
+                document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                selectedCategory = key;
+                filterCards();
+            });
+            categoriesContainer.appendChild(button);
+        }
+        
+        // Event Listeners
+        flashcard.addEventListener('click', () => {
+            flashcard.classList.toggle('flipped');
+        });
+        
+        prevBtn.addEventListener('click', () => {
+            currentCardIndex = currentCardIndex > 0 ? currentCardIndex - 1 : currentCards.length - 1;
+            updateCard();
+            flashcard.classList.remove('flipped');
+        });
+        
+        nextBtn.addEventListener('click', () => {
+            currentCardIndex = currentCardIndex < currentCards.length - 1 ? currentCardIndex + 1 : 0;
+            updateCard();
+            flashcard.classList.remove('flipped');
+        });
+        
+        showRomajiCheckbox.addEventListener('change', () => {
+            romajiEl.style.display = showRomajiCheckbox.checked ? 'block' : 'none';
+        });
+        
+        showPronunciationCheckbox.addEventListener('change', () => {
+            pronunciationEl.style.display = showPronunciationCheckbox.checked ? 'block' : 'none';
+        });
+        
+        shuffleCardsCheckbox.addEventListener('change', () => {
+            isShuffled = shuffleCardsCheckbox.checked;
+            filterCards();
+        });
+        
+        // Functions
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+        
+        function filterCards() {
+            if (selectedCategory === 'all') {
+                currentCards = isShuffled ? shuffleArray([...allCards]) : [...allCards];
+            } else {
+                const filteredCards = allCards.filter(card => card.category === selectedCategory);
+                currentCards = isShuffled ? shuffleArray([...filteredCards]) : [...filteredCards];
+            }
+            
+            currentCardIndex = 0;
+            updateCard();
+            flashcard.classList.remove('flipped');
+        }
+        
+        function updateCard() {
+            const card = currentCards[currentCardIndex];
+            
+            japaneseEl.textContent = card.japanese;
+            romajiEl.textContent = card.romaji;
+            pronunciationEl.textContent = `"${card.pronunciation}"`;
+            memoryAidEl.textContent = card.memoryAid;
+            englishEl.textContent = card.english;
+            exampleEl.textContent = card.example;
+            exampleRomajiEl.textContent = card.exampleRomaji;
+            exampleEnglishEl.textContent = card.exampleEnglish;
+            
+            cardCounter.textContent = `Card ${currentCardIndex + 1} of ${currentCards.length}`;
+        }
+        
+        // Initialize
+        updateCard();
+    </script>
+</body>
+</html>
